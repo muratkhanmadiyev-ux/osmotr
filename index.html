@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Осмотр оборудования</title>
+<style>
+:root{
+  --ink:#14181d;
+  --ink-2:#5b666f;
+  --line:#d5dbe0;
+  --paper:#f2f4f6;
+  --card:#ffffff;
+  --ok:#0a7d3c;
+  --ok-bg:#e6f4ea;
+  --bad:#c02617;
+  --bad-bg:#fdeceb;
+  --mark:#f2c200;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  font-size:17px;
+  line-height:1.4;
+  padding-bottom:120px;
+}
+.stripe{height:8px;background:repeating-linear-gradient(135deg,var(--mark) 0 14px,#14181d 14px 28px)}
+header{background:var(--ink);color:#fff;padding:16px 16px 18px}
+header .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#9aa6b0;font-weight:700}
+header h1{margin:6px 0 0;font-size:26px;line-height:1.15;font-weight:800;letter-spacing:-.02em}
+header .meta{margin-top:10px;font-size:14px;color:#b9c4cd;font-variant-numeric:tabular-nums}
+main{padding:16px 14px 0;max-width:720px;margin:0 auto}
+.block{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden}
+.block > label{display:block;padding:14px 14px 4px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+input[type=text],textarea{
+  width:100%;font:inherit;color:var(--ink);background:#fff;
+  border:2px solid var(--line);border-radius:10px;padding:12px 12px;
+}
+.block > input[type=text]{width:calc(100% - 28px);margin:0 14px 14px}
+input:focus,textarea:focus{outline:3px solid #14181d;outline-offset:1px;border-color:var(--ink)}
+.section-title{
+  display:flex;align-items:center;gap:10px;
+  margin:22px 2px 10px;font-size:14px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink)
+}
+.section-title::after{content:"";flex:1;height:3px;background:var(--mark)}
+.item{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
+.item.ok{border-left-color:var(--ok);background:var(--ok-bg)}
+.item.bad{border-left-color:var(--bad);background:var(--bad-bg)}
+.item p{margin:0 0 12px;font-size:16px}
+.item .num{font-weight:800;color:var(--ink-2);font-variant-numeric:tabular-nums;margin-right:6px}
+.choice{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choice button{
+  font:inherit;font-weight:800;font-size:17px;padding:16px 8px;border-radius:10px;
+  border:2px solid var(--line);background:#fff;color:var(--ink-2);cursor:pointer;min-height:58px;
+}
+.choice button[aria-pressed=true][data-v=ok]{background:var(--ok);border-color:var(--ok);color:#fff}
+.choice button[aria-pressed=true][data-v=bad]{background:var(--bad);border-color:var(--bad);color:#fff}
+.comment{margin-top:12px}
+.comment textarea{min-height:88px;border-color:var(--bad)}
+.comment span{display:block;font-size:13px;font-weight:700;color:var(--bad);margin-bottom:6px}
+.bar{
+  position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);
+  padding:12px 14px calc(12px + env(safe-area-inset-bottom));z-index:5
+}
+.bar .row{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.bar .count{font-size:14px;font-weight:700;color:var(--ink-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.bar button{
+  flex:1;font:inherit;font-weight:800;font-size:18px;padding:16px;border-radius:10px;border:0;
+  background:var(--ink);color:#fff;cursor:pointer;min-height:58px
+}
+.bar button:disabled{background:#c3cbd2;color:#fff;cursor:not-allowed}
+.note{padding:10px 14px 0;max-width:720px;margin:0 auto;font-size:14px;color:var(--ink-2)}
+.alert{margin:0 0 14px;padding:14px;border-radius:12px;border:2px solid var(--bad);background:var(--bad-bg);color:var(--bad);font-weight:700}
+.done{padding:40px 20px;text-align:center;max-width:520px;margin:0 auto}
+.done .tick{width:82px;height:82px;border-radius:50%;background:var(--ok);color:#fff;font-size:44px;line-height:82px;margin:0 auto 18px}
+.done h2{font-size:24px;margin:0 0 8px}
+.done p{color:var(--ink-2);margin:0 0 22px;font-variant-numeric:tabular-nums}
+.done button{font:inherit;font-weight:800;font-size:17px;padding:15px 26px;border-radius:10px;border:2px solid var(--ink);background:#fff;cursor:pointer}
+.pick{padding:6px 0}
+.pick a{display:block;background:var(--card);border:1px solid var(--line);border-left:6px solid var(--mark);border-radius:12px;padding:18px 16px;margin-bottom:10px;text-decoration:none;color:var(--ink);font-weight:700;font-size:18px}
+@media (prefers-reduced-motion:no-preference){.item{transition:background .15s,border-color .15s}}
+</style>
+</head>
+<body>
+
+<!-- ================================================================
+     НАСТРОЙКА. Меняется только этот блок.
+     1) ENDPOINT — ссылка веб-приложения Google Apps Script (шаг 4 инструкции)
+     2) POINTS   — переделы и пункты чек-листов
+     ================================================================ -->
+<script>
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbxGWbWQzGkPN3F5cMTSwT3stU2IR56nhK7u2pKS7xotArlYU5E4iD6L-oC9vUjaQ7M1/exec";
+
+const POINTS = {
+  "dsk1": {
+    name: "ДСК-1",
+    sections: [
+      { title: "Бункер и питатель", items: [
+        "Футеровка бункера: износ, отрывы; нет зависаний и негабарита",
+        "Пластины/цепи/лоток питателя: износ, трещины, крепёж, натяжение",
+        "Колосники: забивка, износ, целостность",
+        "Привод питателя: нагрев, шум, смазка"
+      ]},
+      { title: "Дробилка", items: [
+        "Износ рабочих органов (щёки / броня конуса / билы, отбойные плиты) и футеровки камеры",
+        "Затяжка клиньев, болтов брони, шпилек, стопорных элементов",
+        "Масло: уровень, качество, температура, давление; работа маслостанции, фильтры, охлаждение",
+        "Гидросистема: утечки, давление, состояние РВД, работа гидроцилиндров и подпорных пружин",
+        "Замер разгрузочной щели, при необходимости регулировка",
+        "Подшипниковые узлы: нагрев, шум, вибрация (замер)",
+        "Эксцентрик, распорная плита, пружины, тяги",
+        "Ремни: натяжение, износ, соосность шкивов, ограждение на месте",
+        "Фундаментные болты и виброопоры"
+      ]}
+    ]
+  },
+
+  "dsk2": {
+    name: "ДСК-2",
+    sections: [
+      { title: "Бункер и питатель", items: [
+        "Футеровка бункера: износ, отрывы; нет зависаний и негабарита",
+        "Пластины/цепи/лоток питателя: износ, трещины, крепёж, натяжение",
+        "Колосники: забивка, износ, целостность",
+        "Привод питателя: нагрев, шум, смазка"
+      ]},
+      { title: "Дробилка", items: [
+        "Износ рабочих органов (щёки / броня конуса / билы, отбойные плиты) и футеровки камеры",
+        "Затяжка клиньев, болтов брони, шпилек, стопорных элементов",
+        "Масло: уровень, качество, температура, давление; работа маслостанции, фильтры, охлаждение",
+        "Гидросистема: утечки, давление, состояние РВД, работа гидроцилиндров и подпорных пружин",
+        "Замер разгрузочной щели, при необходимости регулировка",
+        "Подшипниковые узлы: нагрев, шум, вибрация (замер)",
+        "Эксцентрик, распорная плита, пружины, тяги",
+        "Ремни: натяжение, износ, соосность шкивов, ограждение на месте",
+        "Фундаментные болты и виброопоры"
+      ]}
+    ]
+  }
+};
+</script>
+<!-- ============ КОНЕЦ НАСТРОЙКИ ============ -->
+
+<div class="stripe"></div>
+<header>
+  <div class="eyebrow">Осмотр оборудования</div>
+  <h1 id="pointName">—</h1>
+  <div class="meta" id="stamp"></div>
+</header>
+
+<main id="app"></main>
+
+<div class="bar" id="bar" hidden>
+  <div class="row">
+    <span class="count" id="count">0 / 0</span>
+    <button id="send" disabled>Отправить</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const $ = s => document.querySelector(s);
+  const app = $("#app"), bar = $("#bar"), sendBtn = $("#send"), countEl = $("#count");
+
+  const params = new URLSearchParams(location.search);
+  const key = params.get("p") || params.get("point") || "";
+  const point = POINTS[key];
+
+  const started = new Date();
+  const pad = n => String(n).padStart(2,"0");
+  const human = d => `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
+  // Точка не указана в ссылке — показываем выбор, чтобы человек не встал в тупик
+  if(!point){
+    $("#pointName").textContent = "Выберите передел";
+    $("#stamp").textContent = human(started);
+    const wrap = document.createElement("div");
+    wrap.className = "pick";
+    wrap.innerHTML = '<p class="note" style="padding-left:0">Отсканируйте QR-код на оборудовании или выберите передел вручную.</p>';
+    Object.keys(POINTS).forEach(k=>{
+      const a = document.createElement("a");
+      a.href = "?p=" + k;
+      a.textContent = POINTS[k].name;
+      wrap.appendChild(a);
+    });
+    app.appendChild(wrap);
+    return;
+  }
+
+  $("#pointName").textContent = point.name;
+  $("#stamp").textContent = human(started);
+
+  // Блок «кто осматривает»
+  const who = document.createElement("div");
+  who.className = "block";
+  who.innerHTML = '<label for="fio">Фамилия и инициалы</label><input type="text" id="fio" autocomplete="name" placeholder="Иванов И.И.">';
+  app.appendChild(who);
+  const fio = $("#fio");
+  fio.value = localStorage.getItem("fio") || "";
+  fio.addEventListener("input", ()=>{ localStorage.setItem("fio", fio.value.trim()); refresh(); });
+
+  // Пункты чек-листа
+  const answers = [];
+  let n = 0;
+  point.sections.forEach(sec=>{
+    const h = document.createElement("div");
+    h.className = "section-title";
+    h.textContent = sec.title;
+    app.appendChild(h);
+
+    sec.items.forEach(text=>{
+      n++;
+      const rec = { section: sec.title, item: text, status: "", comment: "" };
+      answers.push(rec);
+
+      const el = document.createElement("div");
+      el.className = "item";
+      el.innerHTML =
+        '<p><span class="num">'+n+'.</span>'+text+'</p>'+
+        '<div class="choice">'+
+          '<button type="button" data-v="ok" aria-pressed="false">Норма</button>'+
+          '<button type="button" data-v="bad" aria-pressed="false">Ошибка</button>'+
+        '</div>'+
+        '<div class="comment" hidden><span>Опишите, что не так</span><textarea placeholder="Например: течь по РВД на левом гидроцилиндре"></textarea></div>';
+
+      const btns = el.querySelectorAll(".choice button");
+      const box = el.querySelector(".comment");
+      const ta  = el.querySelector("textarea");
+
+      btns.forEach(b=>b.addEventListener("click", ()=>{
+        const v = b.dataset.v;
+        rec.status = v === "ok" ? "Норма" : "Ошибка";
+        btns.forEach(x=>x.setAttribute("aria-pressed", String(x===b)));
+        el.classList.toggle("ok",  v==="ok");
+        el.classList.toggle("bad", v==="bad");
+        box.hidden = v!=="bad";
+        if(v==="ok"){ ta.value=""; rec.comment=""; } else { ta.focus(); }
+        refresh();
+      }));
+
+      ta.addEventListener("input", ()=>{ rec.comment = ta.value.trim(); refresh(); });
+      app.appendChild(el);
+    });
+  });
+
+  const note = document.createElement("p");
+  note.className = "note";
+  note.textContent = "Время и передел приложение подставляет само. Отправка доступна, когда отмечены все пункты.";
+  app.appendChild(note);
+
+  bar.hidden = false;
+
+  function ready(){
+    if(!fio.value.trim()) return false;
+    return answers.every(a => a.status === "Норма" || (a.status === "Ошибка" && a.comment.length > 2));
+  }
+  function refresh(){
+    const done = answers.filter(a=>a.status).length;
+    countEl.textContent = done + " / " + answers.length;
+    sendBtn.disabled = !ready();
+  }
+  refresh();
+
+  let sending = false;
+  sendBtn.addEventListener("click", async ()=>{
+    if(sending || !ready()) return;
+    sending = true;
+    sendBtn.disabled = true;
+    sendBtn.textContent = "Отправляем…";
+    document.querySelectorAll(".alert").forEach(e=>e.remove());
+
+    const now = new Date();
+    const payload = {
+      id: key.toUpperCase() + "-" + now.getTime(),
+      point: point.name,
+      pointKey: key,
+      fio: fio.value.trim(),
+      startedAt: human(started),
+      finishedAt: human(now),
+      deviceTime: now.toISOString(),
+      answers: answers
+    };
+
+    try{
+      const res = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: {"Content-Type":"text/plain;charset=utf-8"},
+        body: JSON.stringify(payload)
+      });
+      if(!res.ok) throw new Error("HTTP " + res.status);
+      const bad = answers.filter(a=>a.status==="Ошибка").length;
+      document.body.innerHTML =
+        '<div class="stripe"></div><div class="done">'+
+        '<div class="tick">✓</div>'+
+        '<h2>Осмотр отправлен</h2>'+
+        '<p>'+point.name+' · '+human(now)+'<br>Замечаний: '+bad+'</p>'+
+        '<button onclick="location.href=location.pathname">Новый осмотр</button></div>';
+      window.scrollTo(0,0);
+    }catch(err){
+      const a = document.createElement("div");
+      a.className = "alert";
+      a.textContent = "Не отправлено: нет связи с сервером. Данные сохранены на экране — нажмите «Отправить» ещё раз, когда появится сеть.";
+      app.prepend(a);
+      a.scrollIntoView({block:"center"});
+      sending = false;
+      sendBtn.textContent = "Отправить";
+      refresh();
+    }
+  });
+})();
+</script>
+</body>
+</html>
