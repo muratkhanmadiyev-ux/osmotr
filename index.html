@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Осмотр оборудования</title> 
+<title>Лист осмотра оборудования</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#14181d">
 <meta name="mobile-web-app-capable" content="yes">
@@ -37,22 +37,29 @@ body{
 .stripe{height:8px;background:repeating-linear-gradient(135deg,var(--mark) 0 14px,#14181d 14px 28px)}
 header{background:var(--ink);color:#fff;padding:16px 16px 18px}
 header .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#9aa6b0;font-weight:700}
-header h1{margin:6px 0 0;font-size:26px;line-height:1.15;font-weight:800;letter-spacing:-.02em}
+header h1{margin:6px 0 0;font-size:24px;line-height:1.15;font-weight:800;letter-spacing:-.02em}
 header .meta{margin-top:10px;font-size:14px;color:#b9c4cd;font-variant-numeric:tabular-nums}
-main{padding:16px 14px 0;max-width:720px;margin:0 auto}
-.block{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden}
-.block > label{display:block;padding:14px 14px 4px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+main{padding:16px 14px 0;max-width:760px;margin:0 auto}
+.block{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:14px;padding:14px}
+.block > label{display:block;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);margin-bottom:8px}
 input[type=text],textarea{
   width:100%;font:inherit;color:var(--ink);background:#fff;
-  border:2px solid var(--line);border-radius:10px;padding:12px 12px;
+  border:2px solid var(--line);border-radius:10px;padding:12px;
 }
-.block > input[type=text]{width:calc(100% - 28px);margin:0 14px 14px}
 input:focus,textarea:focus{outline:3px solid #14181d;outline-offset:1px;border-color:var(--ink)}
-.section-title{
-  display:flex;align-items:center;gap:10px;
-  margin:22px 2px 10px;font-size:14px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink)
+.shift{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.shift button{
+  font:inherit;font-weight:800;font-size:17px;padding:15px 8px;border-radius:10px;
+  border:2px solid var(--line);background:#fff;color:var(--ink-2);cursor:pointer;min-height:54px
 }
-.section-title::after{content:"";flex:1;height:3px;background:var(--mark)}
+.shift button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.section-head{display:flex;align-items:flex-end;gap:10px;margin:24px 2px 10px}
+.section-head h2{margin:0;flex:1;font-size:15px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--ink)}
+.section-head button{
+  font:inherit;font-size:13px;font-weight:700;padding:8px 12px;border-radius:8px;
+  border:2px solid var(--ok);background:#fff;color:var(--ok);cursor:pointer;white-space:nowrap
+}
+.rule{height:3px;background:var(--mark);margin:0 2px 12px}
 .item{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
 .item.ok{border-left-color:var(--ok);background:var(--ok-bg)}
 .item.bad{border-left-color:var(--bad);background:var(--bad-bg)}
@@ -68,83 +75,110 @@ input:focus,textarea:focus{outline:3px solid #14181d;outline-offset:1px;border-c
 .comment{margin-top:12px}
 .comment textarea{min-height:88px;border-color:var(--bad)}
 .comment span{display:block;font-size:13px;font-weight:700;color:var(--bad);margin-bottom:6px}
+.extra{margin-top:24px}
+.extra .hint{font-size:14px;color:var(--ink-2);margin:0 0 10px}
+.extra input{margin-bottom:10px}
 .bar{
   position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);
   padding:12px 14px calc(12px + env(safe-area-inset-bottom));z-index:5
 }
-.bar .row{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.bar .row{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px}
 .bar .count{font-size:14px;font-weight:700;color:var(--ink-2);font-variant-numeric:tabular-nums;white-space:nowrap}
 .bar button{
   flex:1;font:inherit;font-weight:800;font-size:18px;padding:16px;border-radius:10px;border:0;
   background:var(--ink);color:#fff;cursor:pointer;min-height:58px
 }
 .bar button:disabled{background:#c3cbd2;color:#fff;cursor:not-allowed}
-.note{padding:10px 14px 0;max-width:720px;margin:0 auto;font-size:14px;color:var(--ink-2)}
+.note{padding:10px 14px 0;max-width:760px;margin:0 auto;font-size:14px;color:var(--ink-2)}
 .alert{margin:0 0 14px;padding:14px;border-radius:12px;border:2px solid var(--bad);background:var(--bad-bg);color:var(--bad);font-weight:700}
+.queue{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 14px;padding:12px 14px;border-radius:12px;border:2px solid var(--mark);background:#fff8dd;font-weight:700;font-size:15px}
+.queue span{flex:1;min-width:180px}
+.queue button{font:inherit;font-weight:800;font-size:15px;padding:10px 14px;border-radius:9px;border:0;background:var(--ink);color:#fff;cursor:pointer}
+.queue button:disabled{background:#c3cbd2}
+.queue.done-flash{border-color:var(--ok);background:var(--ok-bg);color:var(--ok)}
 .done{padding:40px 20px;text-align:center;max-width:520px;margin:0 auto}
 .done .tick{width:82px;height:82px;border-radius:50%;background:var(--ok);color:#fff;font-size:44px;line-height:82px;margin:0 auto 18px}
+.done .tick.wait{background:var(--mark);color:var(--ink)}
 .done h2{font-size:24px;margin:0 0 8px}
 .done p{color:var(--ink-2);margin:0 0 22px;font-variant-numeric:tabular-nums}
 .done button{font:inherit;font-weight:800;font-size:17px;padding:15px 26px;border-radius:10px;border:2px solid var(--ink);background:#fff;cursor:pointer}
-.pick{padding:6px 0}
 .pick a{display:block;background:var(--card);border:1px solid var(--line);border-left:6px solid var(--mark);border-radius:12px;padding:18px 16px;margin-bottom:10px;text-decoration:none;color:var(--ink);font-weight:700;font-size:18px}
-@media (prefers-reduced-motion:no-preference){.item{transition:background .15s,border-color .15s}}
+.pick a small{display:block;font-weight:500;font-size:14px;color:var(--ink-2);margin-top:4px}
 </style>
 </head>
 <body>
 
 <!-- ================================================================
      НАСТРОЙКА. Меняется только этот блок.
-     1) ENDPOINT — ссылка веб-приложения Google Apps Script (шаг 4 инструкции)
-     2) POINTS   — переделы и пункты чек-листов
+     1) ENDPOINT — адрес вебхука n8n или веб-приложения Apps Script
+     2) POINTS   — линии осмотра и пункты чек-листов
      ================================================================ -->
 <script>
-const ENDPOINT = "https://script.google.com/macros/s/AKfycbygHDSZBT06yPbxck5rjVUsK2psDA6i45xLOVFfJkv3N_ZexiFsTteV83INm1Oy9HTG/exec";
+const ENDPOINT = "https://muratkhanmadiyev.app.n8n.cloud/webhook/osmotr";
+
+// Пункты, одинаковые для всех конвейеров
+const CONV = [
+  "Привод (редуктор, вал)",
+  "Ролики",
+  "Лента",
+  "Подшипник привод",
+  "Подшипник хвост",
+  "Фартук-желоб",
+  "Чистики"
+];
+const conv = t => ({ title: t, items: CONV });
 
 const POINTS = {
-  "dsk1": {
-    name: "ДСК-1",
+
+  "drobl": {
+    name: "Дробление",
+    place: "ДСК Ашыктас",
     sections: [
-      { title: "Бункер и питатель", items: [
-        "Футеровка бункера: износ, отрывы; нет зависаний и негабарита",
-        "Пластины/цепи/лоток питателя: износ, трещины, крепёж, натяжение",
-        "Колосники: забивка, износ, целостность",
-        "Привод питателя: нагрев, шум, смазка"
+      { title: "Колосниковый питатель TKF12-48-2V, s/n 2422012", items: [
+        "Состояние привода: посторонний шум или вибрация на двигателе и редукторе, утечка с сапуна",
+        "Состояние лотка и колосников: налипание, повреждения",
+        "Пружины: нет материала на них, механические повреждения"
       ]},
-      { title: "Дробилка", items: [
-        "Износ рабочих органов (щёки / броня конуса / билы, отбойные плиты) и футеровки камеры",
-        "Затяжка клиньев, болтов брони, шпилек, стопорных элементов",
-        "Масло: уровень, качество, температура, давление; работа маслостанции, фильтры, охлаждение",
-        "Гидросистема: утечки, давление, состояние РВД, работа гидроцилиндров и подпорных пружин",
-        "Замер разгрузочной щели, при необходимости регулировка",
-        "Подшипниковые узлы: нагрев, шум, вибрация (замер)",
-        "Эксцентрик, распорная плита, пружины, тяги",
-        "Ремни: натяжение, износ, соосность шкивов, ограждение на месте",
-        "Фундаментные болты и виброопоры"
+      { title: "3201-CR-101 Щековая дробилка C120, s/n 31690", items: [
+        "Смазка и температура подшипников ниже 70 °C: есть смазка на тавотнице, нет повреждений тавотницы и точек смазки",
+        "Клиноременная передача: натяжение ремней, трещины и другие повреждения",
+        "Состояние дробящих и боковых плит: трещины",
+        "Состояние распорной плиты (нет материала), тяг, седла, пружин (затянуты)",
+        "Состояние механизма регулировки: цилиндр и его крепления",
+        "Шумы и вибрация на приводной части: двигатель и редуктор",
+        "Болтовые соединения"
+      ]},
+      { title: "Лотковый питатель ТКР 12-25, s/n 25120077", items: [
+        "Состояние привода: посторонний шум или вибрация на двигателе и редукторе, утечка с сапуна",
+        "Состояние лотка: визуальный осмотр, отсутствие повреждений",
+        "Шумы и вибрация на приводной части: двигатель",
+        "Пружины: нет материала на них, механические повреждения"
       ]}
     ]
   },
 
-  "dsk2": {
-    name: "ДСК-2",
+  "conv1000": {
+    name: "Конвейеры 1000 мм",
+    place: "ДСК Ашыктас",
     sections: [
-      { title: "Бункер и питатель", items: [
-        "Футеровка бункера: износ, отрывы; нет зависаний и негабарита",
-        "Пластины/цепи/лоток питателя: износ, трещины, крепёж, натяжение",
-        "Колосники: забивка, износ, целостность",
-        "Привод питателя: нагрев, шум, смазка"
-      ]},
-      { title: "Дробилка", items: [
-        "Износ рабочих органов (щёки / броня конуса / билы, отбойные плиты) и футеровки камеры",
-        "Затяжка клиньев, болтов брони, шпилек, стопорных элементов",
-        "Масло: уровень, качество, температура, давление; работа маслостанции, фильтры, охлаждение",
-        "Гидросистема: утечки, давление, состояние РВД, работа гидроцилиндров и подпорных пружин",
-        "Замер разгрузочной щели, при необходимости регулировка",
-        "Подшипниковые узлы: нагрев, шум, вибрация (замер)",
-        "Эксцентрик, распорная плита, пружины, тяги",
-        "Ремни: натяжение, износ, соосность шкивов, ограждение на месте",
-        "Фундаментные болты и виброопоры"
-      ]}
+      conv("130-CV-101 Главный конвейер"),
+      conv("130-CV-110 · 1000 мм × 18 м"),
+      conv("130-CV-200 · 1000 мм × 10 м"),
+      conv("130-CV-210 · 1000 мм × 25 м"),
+      conv("130-CV-220 · 1000 мм × 25 м")
+    ]
+  },
+
+  "conv650": {
+    name: "Конвейеры 650 мм",
+    place: "ДСК Ашыктас",
+    sections: [
+      conv("130-CV-230 · 650 мм × 8 м"),
+      conv("130-CV-240 · 650 мм × 18 м"),
+      conv("130-CV-250 · 650 мм × 18 м"),
+      conv("130-CV-260 · 650 мм × 18 м"),
+      conv("130-CV-270 · 650 мм × 18 м"),
+      conv("130-CV-280 · 650 мм × 18 м")
     ]
   }
 };
@@ -153,7 +187,7 @@ const POINTS = {
 
 <div class="stripe"></div>
 <header>
-  <div class="eyebrow">Осмотр оборудования</div>
+  <div class="eyebrow" id="place">Лист осмотра оборудования</div>
   <h1 id="pointName">—</h1>
   <div class="meta" id="stamp"></div>
 </header>
@@ -180,43 +214,72 @@ const POINTS = {
   const pad = n => String(n).padStart(2,"0");
   const human = d => `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 
-  // Точка не указана в ссылке — показываем выбор, чтобы человек не встал в тупик
   if(!point){
-    $("#pointName").textContent = "Выберите передел";
+    $("#pointName").textContent = "Выберите линию";
     $("#stamp").textContent = human(started);
     const wrap = document.createElement("div");
     wrap.className = "pick";
-    wrap.innerHTML = '<p class="note" style="padding-left:0">Отсканируйте QR-код на оборудовании или выберите передел вручную.</p>';
+    wrap.innerHTML = '<p class="note" style="padding:0 0 8px">Отсканируйте QR-код на оборудовании или выберите линию вручную.</p>';
     Object.keys(POINTS).forEach(k=>{
+      const p = POINTS[k];
+      const total = p.sections.reduce((s,x)=>s+x.items.length,0);
       const a = document.createElement("a");
       a.href = "?p=" + k;
-      a.textContent = POINTS[k].name;
+      a.innerHTML = p.name + "<small>" + p.sections.length + " узлов · " + total + " пунктов</small>";
       wrap.appendChild(a);
     });
     app.appendChild(wrap);
     return;
   }
 
+  $("#place").textContent = point.place || "Лист осмотра оборудования";
   $("#pointName").textContent = point.name;
   $("#stamp").textContent = human(started);
 
-  // Блок «кто осматривает»
+  // Смена
+  let shift = "";
+  const shiftBlock = document.createElement("div");
+  shiftBlock.className = "block";
+  shiftBlock.innerHTML = '<label>Смена</label><div class="shift">' +
+    '<button type="button" data-s="ДЕНЬ" aria-pressed="false">ДЕНЬ</button>' +
+    '<button type="button" data-s="НОЧЬ" aria-pressed="false">НОЧЬ</button></div>';
+  app.appendChild(shiftBlock);
+  const shiftBtns = shiftBlock.querySelectorAll(".shift button");
+  shiftBtns.forEach(b=>b.addEventListener("click", ()=>{
+    shift = b.dataset.s;
+    shiftBtns.forEach(x=>x.setAttribute("aria-pressed", String(x===b)));
+    refresh();
+  }));
+
+  // Кто проводил осмотр
   const who = document.createElement("div");
   who.className = "block";
-  who.innerHTML = '<label for="fio">Фамилия и инициалы</label><input type="text" id="fio" autocomplete="name" placeholder="Иванов И.И.">';
+  who.innerHTML = '<label for="fio">Инспекцию провёл — фамилия и инициалы</label><input type="text" id="fio" autocomplete="name" placeholder="Иванов И.И.">';
   app.appendChild(who);
   const fio = $("#fio");
   fio.value = localStorage.getItem("fio") || "";
   fio.addEventListener("input", ()=>{ localStorage.setItem("fio", fio.value.trim()); refresh(); });
 
-  // Пункты чек-листа
+  // Пункты
   const answers = [];
   let n = 0;
+
   point.sections.forEach(sec=>{
-    const h = document.createElement("div");
-    h.className = "section-title";
+    const head = document.createElement("div");
+    head.className = "section-head";
+    const h = document.createElement("h2");
     h.textContent = sec.title;
-    app.appendChild(h);
+    const all = document.createElement("button");
+    all.type = "button";
+    all.textContent = "Все норма";
+    head.appendChild(h); head.appendChild(all);
+    app.appendChild(head);
+
+    const rule = document.createElement("div");
+    rule.className = "rule";
+    app.appendChild(rule);
+
+    const setters = [];
 
     sec.items.forEach(text=>{
       n++;
@@ -231,36 +294,51 @@ const POINTS = {
           '<button type="button" data-v="ok" aria-pressed="false">Норма</button>'+
           '<button type="button" data-v="bad" aria-pressed="false">Ошибка</button>'+
         '</div>'+
-        '<div class="comment" hidden><span>Опишите, что не так</span><textarea placeholder="Например: течь по РВД на левом гидроцилиндре"></textarea></div>';
+        '<div class="comment" hidden><span>Опишите, что не так</span><textarea placeholder="Например: течь по сапуну редуктора"></textarea></div>';
 
       const btns = el.querySelectorAll(".choice button");
       const box = el.querySelector(".comment");
       const ta  = el.querySelector("textarea");
 
-      btns.forEach(b=>b.addEventListener("click", ()=>{
-        const v = b.dataset.v;
+      function set(v, focus){
         rec.status = v === "ok" ? "Норма" : "Ошибка";
-        btns.forEach(x=>x.setAttribute("aria-pressed", String(x===b)));
+        btns.forEach(x=>x.setAttribute("aria-pressed", String(x.dataset.v===v)));
         el.classList.toggle("ok",  v==="ok");
         el.classList.toggle("bad", v==="bad");
         box.hidden = v!=="bad";
-        if(v==="ok"){ ta.value=""; rec.comment=""; } else { ta.focus(); }
+        if(v==="ok"){ ta.value=""; rec.comment=""; }
+        else if(focus){ ta.focus(); }
         refresh();
-      }));
+      }
+      setters.push(()=>{ if(rec.status !== "Ошибка") set("ok", false); });
 
+      btns.forEach(b=>b.addEventListener("click", ()=>set(b.dataset.v, true)));
       ta.addEventListener("input", ()=>{ rec.comment = ta.value.trim(); refresh(); });
       app.appendChild(el);
     });
+
+    all.addEventListener("click", ()=>setters.forEach(f=>f()));
   });
+
+  // Иные дефекты по линии
+  const extra = document.createElement("div");
+  extra.className = "block extra";
+  extra.innerHTML =
+    '<label>Иные дефекты по данной линии</label>'+
+    '<p class="hint">Заполняется при необходимости. Если ничего нет — оставьте пустым.</p>'+
+    '<input type="text" id="exNum" placeholder="Номер оборудования">'+
+    '<textarea id="exText" placeholder="Комментарий"></textarea>';
+  app.appendChild(extra);
 
   const note = document.createElement("p");
   note.className = "note";
-  note.textContent = "Время и передел приложение подставляет само. Отправка доступна, когда отмечены все пункты.";
+  note.textContent = "Дата, время и линия подставляются автоматически. Отправка доступна, когда выбрана смена, указано ФИО и отмечены все пункты.";
   app.appendChild(note);
 
   bar.hidden = false;
 
   function ready(){
+    if(!shift) return false;
     if(!fio.value.trim()) return false;
     return answers.every(a => a.status === "Норма" || (a.status === "Ошибка" && a.comment.length > 2));
   }
@@ -271,54 +349,127 @@ const POINTS = {
   }
   refresh();
 
+  // Очередь показывается вверху формы, если есть неотправленные осмотры
+  const banner = document.createElement("div");
+  banner.className = "queue";
+  banner.hidden = true;
+  app.prepend(banner);
+  drawQueue();
+
+  window.addEventListener("online", ()=>flush(true));
+  setInterval(()=>{ if(navigator.onLine) flush(false); }, 60000);
+  if(navigator.onLine) flush(false);
+
   let sending = false;
   sendBtn.addEventListener("click", async ()=>{
     if(sending || !ready()) return;
     sending = true;
     sendBtn.disabled = true;
-    sendBtn.textContent = "Отправляем…";
-    document.querySelectorAll(".alert").forEach(e=>e.remove());
+    sendBtn.textContent = "Сохраняем…";
 
     const now = new Date();
     const payload = {
       id: key.toUpperCase() + "-" + now.getTime(),
       point: point.name,
       pointKey: key,
+      place: point.place || "",
+      shift: shift,
       fio: fio.value.trim(),
       startedAt: human(started),
       finishedAt: human(now),
       deviceTime: now.toISOString(),
+      extraNumber: $("#exNum").value.trim(),
+      extraComment: $("#exText").value.trim(),
       answers: answers
     };
 
-    try{
-      const res = await fetch(ENDPOINT, {
-        method: "POST",
-        headers: {"Content-Type":"text/plain;charset=utf-8"},
-        body: JSON.stringify(payload)
-      });
-      if(!res.ok) throw new Error("HTTP " + res.status);
-      const bad = answers.filter(a=>a.status==="Ошибка").length;
-      document.body.innerHTML =
-        '<div class="stripe"></div><div class="done">'+
-        '<div class="tick">✓</div>'+
-        '<h2>Осмотр отправлен</h2>'+
-        '<p>'+point.name+' · '+human(now)+'<br>Замечаний: '+bad+'</p>'+
-        '<button onclick="location.href=location.pathname">Новый осмотр</button></div>';
-      window.scrollTo(0,0);
-    }catch(err){
-      const a = document.createElement("div");
-      a.className = "alert";
-      a.textContent = "Не отправлено: нет связи с сервером. Данные сохранены на экране — нажмите «Отправить» ещё раз, когда появится сеть.";
-      app.prepend(a);
-      a.scrollIntoView({block:"center"});
-      sending = false;
-      sendBtn.textContent = "Отправить";
-      refresh();
-    }
+    // Сначала кладём в очередь на телефоне — потерять данные невозможно
+    push(payload);
+    const ok = await send(payload);
+    if(ok) remove(payload.id);
+
+    const bad = answers.filter(a=>a.status==="Ошибка").length;
+    const left = load().length;
+
+    document.body.innerHTML =
+      '<div class="stripe"></div><div class="done">'+
+      '<div class="tick'+(ok ? '' : ' wait')+'">'+(ok ? '✓' : '⏱')+'</div>'+
+      '<h2>'+(ok ? 'Осмотр отправлен' : 'Осмотр сохранён на телефоне')+'</h2>'+
+      '<p>'+point.name+' · смена '+shift+'<br>'+human(now)+' · замечаний: '+bad+
+      (ok ? '' : '<br><br>Нет связи. Отправится автоматически,<br>когда появится сеть. В очереди: '+left)+'</p>'+
+      '<button onclick="location.href=location.pathname">Новый осмотр</button></div>';
+    window.scrollTo(0,0);
   });
 })();
+
+/* ---------- очередь неотправленных осмотров ---------- */
+
+function load(){
+  try{ return JSON.parse(localStorage.getItem("queue") || "[]"); }
+  catch(e){ return []; }
+}
+function save(q){
+  try{ localStorage.setItem("queue", JSON.stringify(q)); }catch(e){}
+}
+function push(p){
+  const q = load(); q.push(p); save(q);
+}
+function remove(id){
+  save(load().filter(x => x.id !== id));
+}
+
+async function send(payload){
+  try{
+    const ctrl = new AbortController();
+    const t = setTimeout(()=>ctrl.abort(), 12000);
+    const res = await fetch(ENDPOINT, {
+      method: "POST",
+      headers: {"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify(payload),
+      signal: ctrl.signal
+    });
+    clearTimeout(t);
+    return res.ok;
+  }catch(e){ return false; }
+}
+
+let flushing = false;
+async function flush(loud){
+  if(flushing) return;
+  const q = load();
+  if(!q.length) return;
+  flushing = true;
+  drawQueue(true);
+
+  for(const p of q){
+    const ok = await send(p);
+    if(!ok) break;      // связь пропала — остальное ждёт следующей попытки
+    remove(p.id);
+    drawQueue();
+  }
+
+  flushing = false;
+  drawQueue();
+  if(loud && !load().length){
+    const b = document.querySelector(".queue");
+    if(b){ b.hidden = false; b.className = "queue done-flash"; b.textContent = "Все осмотры отправлены"; setTimeout(()=>{ b.hidden = true; b.className = "queue"; }, 4000); }
+  }
+}
+
+function drawQueue(busy){
+  const b = document.querySelector(".queue");
+  if(!b) return;
+  const n = load().length;
+  if(!n){ b.hidden = true; return; }
+  b.hidden = false;
+  b.className = "queue";
+  b.innerHTML = '<span>Не отправлено осмотров: <b>'+n+'</b></span>' +
+                '<button type="button"'+(busy ? ' disabled' : '')+'>'+(busy ? 'Отправляем…' : 'Отправить сейчас')+'</button>';
+  const btn = b.querySelector("button");
+  if(btn && !busy) btn.addEventListener("click", ()=>flush(true));
+}
 </script>
+
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
